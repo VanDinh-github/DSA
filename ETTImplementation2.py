@@ -280,20 +280,19 @@ class EulerTourForest(DynamicForest):
         i = index
         node_i_ref = self.nodes[i].reference
 
-        if node_i_ref.previous[0] is None:
+        if node_i_ref.head() == node_i_ref:
             return
         
-        #[6 7 6] make_root(7) => [7 6 7]
+        #[6 7 1 7 2 7 6 4 6] make_root(7) => [7 1 7 2 7 6 4 6 7]
         # Need to identify if between the head and this node has some thing, if not we need to behave differently
         # [6 7 6] make_root(7) => [7 6 7]
-        index_head = node_i_ref.head().index 
-        node_head = self.nodes[index_head]
-        
-        next_of_head = node_head.reference.next[0]
+        head = node_i_ref.head()
+        index_head = head.index
+        next_of_head = head.next[0]
         tail_of_before = None
-        ref_tail = node_i_ref.tail()
+        new_ref_for_head = self.edges[(next_of_head.index, index_head)].next[0]
         tail = node_i_ref.tail()
-        node_head.reference.split_after()
+        head.split_after()
         #If there is something between head and i
         if next_of_head is not node_i_ref: 
             tail_of_before = node_i_ref.previous[0]
@@ -301,14 +300,14 @@ class EulerTourForest(DynamicForest):
         
         # [6 7 6] make_root(7) => [7 6 7], edge(6, 7) => seccond 6
         # [1 2 4 6 4 2 3 2 1 7 1] make_root(2) => [2 4 6 4 2 3 2 1 7 1 2], edge(1, 2) => last 1
-        # [1 2 4 6 4 2 3 2 1 7 1] make_root(4) => [4 6 4 2 3 2 1 2 4], edge(1, 2) => seccond 1
+        # [1 2 4 6 4 2 3 2 1 7 1] make_root(4) => [4 6 4 2 3 2 1 2 4], edge(1, 2), edge(2, 4) = last 2 => seccond 1
         self.edges[(index_head, next_of_head.index)] = tail
         
-        node_head.reference = ref_tail
+        self.nodes[index_head].reference = new_ref_for_head
 
-        current_tail = ref_tail
+        current_tail = tail
         if tail_of_before:
-            ref_tail.insert(next_of_head, tail_of_before)
+            tail.insert(next_of_head, tail_of_before)
             current_tail = tail_of_before
 
         another_node_i = self.NodeInSkipList(i)
