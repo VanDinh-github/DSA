@@ -178,9 +178,6 @@ if __name__=='__main__':
     t=2
     eps=1.5
     dbscan=DynamicDBSCAN(minP, t, eps, data)
-    
-    
-
     dbscan.add_point(np.array([1, 2, 3, 4]))
     
     

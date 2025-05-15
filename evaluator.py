@@ -17,6 +17,6 @@ class ClusteringEvaluator:
         ari = adjusted_rand_score(self.ground_truth, predicted_labels)
 
         return {
-            "NMI": round(nmi, 4),
-            "ARI": round(ari, 4)
+            "NMI": round(nmi, 6),
+            "ARI": round(ari, 6)
         }
